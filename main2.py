@@ -447,7 +447,7 @@ if __name__ == "__main__":
 
     xDomain = np.arange(numRound)
     alpha = 0.05
-    colorAlpha = 0.5
+    colorAlpha = 0.3
     linewidthval = 2
     tt = np.arange(0,numRound,200)
 
@@ -455,16 +455,16 @@ if __name__ == "__main__":
     # plt.title('Cum.Reg')
     plt.plot(xDomain[tt], arrayCUM[tt], 'red', label='klUCB',linewidth=linewidthval)
     plt.plot(xDomain[tt], arrayCUM[tt], 'ro')
-    plt.fill_between(xDomain[tt], np.percentile(matCUM[:,tt], q=100 * alpha, axis=0),
-                     np.percentile(matCUM[:,tt], q=100 * (1 - alpha), axis=0), facecolor='red', alpha=colorAlpha)
+    # plt.fill_between(xDomain[tt], np.percentile(matCUM[:,tt], q=100 * alpha, axis=0),
+    #                  np.percentile(matCUM[:,tt], q=100 * (1 - alpha), axis=0), facecolor='red', alpha=colorAlpha)
     plt.plot(xDomain[tt], arrayCUM_C[tt], 'blue', label='klUCB-C',linewidth=linewidthval)
     plt.plot(xDomain[tt], arrayCUM_C[tt], 'bo')
-    plt.fill_between(xDomain[tt], np.percentile(matCUM_C[:,tt], q=100 * alpha, axis=0),
-                     np.percentile(matCUM_C[:,tt], q=100 * (1 - alpha), axis=0), facecolor='blue', alpha=colorAlpha)
-    plt.plot(xDomain[tt], arrayCUM_CF[tt], 'green', label='klUCB-CF',linewidth=linewidthval)
-    plt.plot(xDomain[tt], arrayCUM_CF[tt], 'go')
-    plt.fill_between(xDomain[tt], np.percentile(matCUM_CF[:,tt], q=100 * alpha, axis=0),
-                     np.percentile(matCUM_CF[:,tt], q=100 * (1 - alpha), axis=0), facecolor='green', alpha=colorAlpha)
+    # plt.fill_between(xDomain[tt], np.percentile(matCUM_C[:,tt], q=100 * alpha, axis=0),
+    #                  np.percentile(matCUM_C[:,tt], q=100 * (1 - alpha), axis=0), facecolor='blue', alpha=colorAlpha)
+    # plt.plot(xDomain[tt], arrayCUM_CF[tt], 'green', label='klUCB-CF',linewidth=linewidthval)
+    # plt.plot(xDomain[tt], arrayCUM_CF[tt], 'go')
+    # plt.fill_between(xDomain[tt], np.percentile(matCUM_CF[:,tt], q=100 * alpha, axis=0),
+    #                  np.percentile(matCUM_CF[:,tt], q=100 * (1 - alpha), axis=0), facecolor='green', alpha=colorAlpha)
     plt.legend(loc='upper left',fontsize=15)
     plt.ylabel('Cum.Reg',fontsize=15)
     plt.xticks(fontsize=15)
@@ -478,9 +478,9 @@ if __name__ == "__main__":
     plt.plot(xDomain, arrayTF_C, 'blue', label='klUCB-C')
     plt.fill_between(xDomain, np.percentile(matTF_C, q=100 * alpha, axis=0),
                      np.percentile(matTF_C, q=100 * (1 - alpha), axis=0), facecolor='blue', alpha=colorAlpha)
-    plt.plot(xDomain, arrayTF_CF, 'green', label='klUCB-CF')
-    plt.fill_between(xDomain, np.percentile(matTF_CF, q=100 * alpha, axis=0),
-                     np.percentile(matTF_CF, q=100 * (1 - alpha), axis=0), facecolor='green', alpha=colorAlpha)
+    # plt.plot(xDomain, arrayTF_CF, 'green', label='klUCB-CF')
+    # plt.fill_between(xDomain, np.percentile(matTF_CF, q=100 * alpha, axis=0),
+    #                  np.percentile(matTF_CF, q=100 * (1 - alpha), axis=0), facecolor='green', alpha=colorAlpha)
     plt.legend()
     plt.show()
 
