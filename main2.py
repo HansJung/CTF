@@ -461,8 +461,8 @@ if __name__ == "__main__":
     plt.plot(xDomain[tt], arrayCUM_C[tt], 'bo')
     # plt.fill_between(xDomain[tt], np.percentile(matCUM_C[:,tt], q=100 * alpha, axis=0),
     #                  np.percentile(matCUM_C[:,tt], q=100 * (1 - alpha), axis=0), facecolor='blue', alpha=colorAlpha)
-    # plt.plot(xDomain[tt], arrayCUM_CF[tt], 'green', label='klUCB-CF',linewidth=linewidthval)
-    # plt.plot(xDomain[tt], arrayCUM_CF[tt], 'go')
+    plt.plot(xDomain[tt], arrayCUM_CF[tt], 'green', label='klUCB-CF',linewidth=linewidthval)
+    plt.plot(xDomain[tt], arrayCUM_CF[tt], 'go')
     # plt.fill_between(xDomain[tt], np.percentile(matCUM_CF[:,tt], q=100 * alpha, axis=0),
     #                  np.percentile(matCUM_CF[:,tt], q=100 * (1 - alpha), axis=0), facecolor='green', alpha=colorAlpha)
     plt.legend(loc='upper left',fontsize=15)
