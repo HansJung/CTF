@@ -126,9 +126,9 @@ def RunKLUCB(numRound, listHB, listLB, listU, TF_causal, TF_naive, TF_CF, listnO
     ''' Initial pulling'''
     # Pulling all arm at once.
     for a in armDomain:
-        # sex, age, r, x, y
-        u = np.random.rand()
-        reward = fY(a,u)
+        u0,u1 = fU()
+        reward = fY(u0,u1,a)
+
         dictNumArm, dictM, dictLastElem = UpdateAfterArm(dictNumArm,dictM,dictLastElem, a, reward)
         cummRegret += listU[armOpt] - listU[a]
         listCummRegret.append(cummRegret)
@@ -180,8 +180,11 @@ def RunKLUCB(numRound, listHB, listLB, listU, TF_causal, TF_naive, TF_CF, listnO
             list_listUpper.append(listUpper)
         # print(t,listUpper)
         armChosen = np.argmax(listUpper)
-        u = np.random.rand()
-        reward = fY(armChosen, u)
+
+        u0, u1 = fU()
+        reward = fY(u0, u1, armChosen)
+
+        # reward = fY(armChosen, u)
         # reward = np.random.binomial(1, listU[armChosen])
         dictNumArm, dictM, dictLastElem = UpdateAfterArm(dictNumArm, dictM, dictLastElem, armChosen, reward)
 
@@ -193,14 +196,59 @@ def RunKLUCB(numRound, listHB, listLB, listU, TF_causal, TF_naive, TF_CF, listnO
         listCummRegret.append(cummRegret)
     return np.asarray(listTFArmCorrect), np.asarray(listCummRegret), list_listUpper
 
-def fY(x,u):
-    result = np.exp(-0.6 * x + 0.3 * u) / (np.exp(-0.6 * x + 0.3 * u) + 1)
-    return result
+def fU():
+    U0 = np.random.binomial(1, 0.2)
+    U1 = np.random.binomial(1, 0.5)
+    return U0,U1
+
+def fY(U0,U1,X):
+    return (U0|U1)^X
+
+def GenParam(nOBS):
+    np.random.seed(1)
+    N = nOBS
+    U0 = np.random.binomial(1, 0.2, N)
+    U1 = np.random.binomial(1, 0.5, N)
+    X = np.random.binomial(1, 0.4, N) * (1 - (U0 ^ U1))
+    numX = len(np.unique(X))
+    px = [1-np.mean(X),np.mean(X)]
+    Y = fY(U0, U1, X)
+
+    OBS = pd.DataFrame({'X': X, 'Y': Y})
+
+    X0 = np.array([0] * N)
+    X1 = np.array([1] * N)
+    Y0 = fY(U0, U1, X0)
+    Y1 = fY(U0, U1, X1)
+
+    print('Y0:', np.mean(Y0))
+    print('Y1:', np.mean(Y1))
+    print('Y|x0:', np.mean(OBS[OBS['X'] == 0]['Y']))
+    print('Y|x1:', np.mean(OBS[OBS['X'] == 1]['Y']))
+
+    # Bound
+    l0 = np.mean(OBS[OBS['X'] == 0]['Y']) * (1 - np.mean(X))
+    l1 = np.mean(OBS[OBS['X'] == 1]['Y']) * (np.mean(X))
+    h0 = l0 + np.mean(X)
+    h1 = l1 + (1 - np.mean(X))
+
+    listU = [np.mean(Y0), np.mean(Y1)]
+    listHB = [h0,h1]
+    listLB = [l0,l1]
+
+    print(l0, np.mean(Y0), h0)
+    print(l1, np.mean(Y1), h1)
+    return listU,listLB,listHB,px
 
 if __name__ == "__main__":
     numRound = 5000
-    numSim = 20
-    nOBS = 20000
+    numSim = 100
+    nOBS = 5000
+
+    listU, listLB, listHB,px = GenParam(nOBS)
+
+    ''' PARAM 0, 181030 '''
+
 
     # ''' PARAM 1 '''
     # U = np.random.normal(loc=0.5,scale=1,size=nOBS) + np.random.rand(nOBS)
@@ -436,18 +484,18 @@ if __name__ == "__main__":
     plt.legend()
     plt.show()
 
-    pickle.dump(listHB,open('Result/listHB.pkl','wb'))
-    pickle.dump(listU, open('Result/listU.pkl', 'wb'))
-    pickle.dump(listLB, open('Result/listLB.pkl', 'wb'))
-    pickle.dump(dictUP,open('Result/dictUP.pkl','wb'))
-    pickle.dump(dictUP_C, open('Result/dictUP_C.pkl', 'wb'))
-    pickle.dump(dictUP_CF, open('Result/dictUP_CF.pkl', 'wb'))
-    pickle.dump(matTF, open('Result/MatTF.pkl', 'wb'))
-    pickle.dump(matTF_C, open('Result/MatTF_C.pkl', 'wb'))
-    pickle.dump(matTF_CF, open('Result/MatTF_CF.pkl', 'wb'))
-    pickle.dump(matCUM, open('Result/MatCUM.pkl', 'wb'))
-    pickle.dump(matCUM_C, open('Result/MatCUM_C.pkl', 'wb'))
-    pickle.dump(matCUM_CF, open('Result/MatCUM_CF.pkl', 'wb'))
+    # pickle.dump(listHB,open('Result/listHB.pkl','wb'))
+    # pickle.dump(listU, open('Result/listU.pkl', 'wb'))
+    # pickle.dump(listLB, open('Result/listLB.pkl', 'wb'))
+    # pickle.dump(dictUP,open('Result/dictUP.pkl','wb'))
+    # pickle.dump(dictUP_C, open('Result/dictUP_C.pkl', 'wb'))
+    # pickle.dump(dictUP_CF, open('Result/dictUP_CF.pkl', 'wb'))
+    # pickle.dump(matTF, open('Result/MatTF.pkl', 'wb'))
+    # pickle.dump(matTF_C, open('Result/MatTF_C.pkl', 'wb'))
+    # pickle.dump(matTF_CF, open('Result/MatTF_CF.pkl', 'wb'))
+    # pickle.dump(matCUM, open('Result/MatCUM.pkl', 'wb'))
+    # pickle.dump(matCUM_C, open('Result/MatCUM_C.pkl', 'wb'))
+    # pickle.dump(matCUM_CF, open('Result/MatCUM_CF.pkl', 'wb'))
 
     # k = 19
     # plt.plot(matCUM[k,:], 'b', label='klUCB')
